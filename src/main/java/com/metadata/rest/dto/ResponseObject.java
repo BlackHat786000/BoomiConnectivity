@@ -6,9 +6,9 @@ public class ResponseObject {
 
     private ProcessDetails processDetails;
 
-    private List<CrtDetails> crtDetails;
+    private List<String> crtDetails;
 
-    private List<ParameterDetails> parameterDetails;
+    private List<String> parameterDetails;
 
     public ProcessDetails getProcessDetails() {
         return processDetails;
@@ -18,19 +18,19 @@ public class ResponseObject {
         this.processDetails = processDetails;
     }
 
-    public List<CrtDetails> getCrtDetails() {
+    public List<String> getCrtDetails() {
         return crtDetails;
     }
 
-    public void setCrtDetails(List<CrtDetails> crtDetails) {
+    public void setCrtDetails(List<String> crtDetails) {
         this.crtDetails = crtDetails;
     }
 
-    public List<ParameterDetails> getParameterDetails() {
+    public List<String> getParameterDetails() {
         return parameterDetails;
     }
 
-    public void setParameterDetails(List<ParameterDetails> parameterDetails) {
+    public void setParameterDetails(List<String> parameterDetails) {
         this.parameterDetails = parameterDetails;
     }
 }

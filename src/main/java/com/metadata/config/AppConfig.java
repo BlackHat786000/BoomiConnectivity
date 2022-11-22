@@ -1,6 +1,5 @@
 package com.metadata.config;
 
-import com.metadata.adapter.impl.BoomiVaultService;
 import com.metadata.rest.dto.BoomiSecret;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,18 +11,9 @@ public class AppConfig {
 
     //Auth
     @Bean
-    public BasicAuthenticationInterceptor boomiBasicAuthenticationInterceptor(BoomiVaultService boomiVaultService) {
-        BoomiSecret boomiAuth = boomiVaultService.getBoomiSecret();
-        return new BasicAuthenticationInterceptor(boomiAuth.getUsername(), boomiAuth.getToken());
-    }
+    public RestTemplate clientLibraryRestTemplate(){
 
-    @Bean
-    public RestTemplate clientLibraryRestTemplate(BasicAuthenticationInterceptor boomiBasicAuthenticationInterceptor){
-
-        final RestTemplate clientLibraryRestTemplate = new RestTemplate();
-        clientLibraryRestTemplate.getInterceptors().add(boomiBasicAuthenticationInterceptor);
-        return clientLibraryRestTemplate;
-//        return new RestTemplate();
+        return new RestTemplate();
     }
 
 }

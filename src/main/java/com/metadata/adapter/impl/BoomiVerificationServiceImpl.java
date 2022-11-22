@@ -64,12 +64,12 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
             response.setProcessDetails(processDetail);
 
             //getCrtDetails(accId,envId,processName)
-            List<CrtDetails> crtDetail = getCrtDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(), request.getProcessName());
+            List<String> crtDetail = getCrtDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(), request.getProcessName());
             response.setCrtDetails(crtDetail);
 
 
             //Process Details (query pack api)
-            List<ParameterDetails> parameterDetail = getParameterDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(),request.getProcessName());
+            List<String> parameterDetail = getParameterDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(),request.getProcessName());
             response.setParameterDetails(parameterDetail);
 
 
@@ -168,10 +168,37 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
 
     }
 
-    public List<CrtDetails>  getCrtDetails(String environmentId,String primaryAcctId,String processName){
+//    public List<CrtDetails>  getCrtDetails(String environmentId,String primaryAcctId,String processName){
+//        logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
+//                primaryAcctId);
+//        List<CrtDetails> crtDetailsList = new ArrayList<>();
+//        try {
+//            EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
+//            if (environmentExtension.getCrossReferences() != null ? !environmentExtension.getCrossReferences().getCrossReference().isEmpty() : false ) {
+//                List<CrossReference> crossReferences = environmentExtension.getCrossReferences().getCrossReference();
+//                if (!(crossReferences.isEmpty())) {
+//                    crossReferences.forEach(updatedCrossReference -> {
+//                        if (updatedCrossReference.getName().substring(0,updatedCrossReference.getName().indexOf("_")).equals(processName)) {
+//                            CrtDetails crtDetails = new CrtDetails();
+////                                crtDetails.setCrtId(updatedCrossReference.getId());
+//                            crtDetails.setCrtName(updatedCrossReference.getName());
+//                            crtDetailsList.add(crtDetails);
+//                        }
+//                    });
+//                }
+//            }
+//        } catch (Exception excep) {
+//            logger.error("Exception occurred in fetching the CRT Details List for environmentId: '{}' "
+//                    + "and primaryAccountId: '{}' and excep: '{}'", environmentId, primaryAcctId, excep.getMessage());
+//            throw new TPApiServiceException(ErrorMessagePropertyConstants.CRT_DETAILS_LIST_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        return crtDetailsList;
+//    }
+
+    public List<String>  getCrtDetails(String environmentId,String primaryAcctId,String processName){
         logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
                 primaryAcctId);
-        List<CrtDetails> crtDetailsList = new ArrayList<>();
+        List<String> crtDetailsList = new ArrayList<>();
         try {
             EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
             if (environmentExtension.getCrossReferences() != null ? !environmentExtension.getCrossReferences().getCrossReference().isEmpty() : false ) {
@@ -179,10 +206,10 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
                 if (!(crossReferences.isEmpty())) {
                     crossReferences.forEach(updatedCrossReference -> {
                         if (updatedCrossReference.getName().substring(0,updatedCrossReference.getName().indexOf("_")).equals(processName)) {
-                            CrtDetails crtDetails = new CrtDetails();
+//                            CrtDetails crtDetails = new CrtDetails();
 //                                crtDetails.setCrtId(updatedCrossReference.getId());
-                            crtDetails.setCrtName(updatedCrossReference.getName());
-                            crtDetailsList.add(crtDetails);
+//                            crtDetails.setCrtName();
+                            crtDetailsList.add(updatedCrossReference.getName());
                         }
                     });
                 }
@@ -195,26 +222,64 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
         return crtDetailsList;
     }
 
-    public List<ParameterDetails>  getParameterDetails(String environmentId, String primaryAcctId, String processName){
+//    public List<ParameterDetails>  getParameterDetails(String environmentId, String primaryAcctId, String processName){
+//        logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
+//                primaryAcctId);
+//        List<ParameterDetails> parameterDetailsList = new ArrayList<>();
+//        try {
+//            EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
+//            if (environmentExtension.getProcessProperties() != null ? !environmentExtension.getProcessProperties().getProcessProperty().isEmpty() : false ) {
+//                List<ProcessProperty> processProperties = environmentExtension.getProcessProperties().getProcessProperty();
+//                if (!(processProperties.isEmpty())) {
+//                    processProperties.forEach(updatedProcessProperties -> {
+//                        if (updatedProcessProperties.getName().equals(processName) ||
+//                                (updatedProcessProperties.getName().contains("_") && updatedProcessProperties.getName().substring(0,updatedProcessProperties.getName().indexOf("_")).equals(processName))) {
+////                          updatedCrossReference.forEach(processPropertyValue )
+//
+//                            List<ProcessPropertyValue> processPropertyValues = updatedProcessProperties.getProcessPropertyValue();
+//                            if(!processPropertyValues.isEmpty()){
+//                                processPropertyValues.forEach( updatedProcessPropertyValues -> {
+//                                    if(updatedProcessPropertyValues.getLabel() != null && !updatedProcessPropertyValues.getLabel().isEmpty()){
+//                                        ParameterDetails parameterDetails = new ParameterDetails();
+//                                        parameterDetails.setParameterName(updatedProcessPropertyValues.getLabel());
+//                                        parameterDetailsList.add(parameterDetails);
+//                                    }
+//                                });
+//                            }
+//
+//                        }
+//                    });
+//                }
+//            }
+//        } catch (Exception excep) {
+//            logger.error("Exception occurred in fetching the CRT Details List for environmentId: '{}' "
+//                    + "and primaryAccountId: '{}' and excep: '{}'", environmentId, primaryAcctId, excep.getMessage());
+//            throw new TPApiServiceException(ErrorMessagePropertyConstants.CRT_DETAILS_LIST_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        return parameterDetailsList;
+//    }
+
+    public List<String>  getParameterDetails(String environmentId, String primaryAcctId, String processName){
         logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
                 primaryAcctId);
-        List<ParameterDetails> parameterDetailsList = new ArrayList<>();
+        List<String> parameterDetailsList = new ArrayList<>();
         try {
             EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
             if (environmentExtension.getProcessProperties() != null ? !environmentExtension.getProcessProperties().getProcessProperty().isEmpty() : false ) {
                 List<ProcessProperty> processProperties = environmentExtension.getProcessProperties().getProcessProperty();
                 if (!(processProperties.isEmpty())) {
-                    processProperties.forEach(updatedCrossReference -> {
-                        if (updatedCrossReference.getName().substring(0,updatedCrossReference.getName().indexOf("_")).equals(processName)) {
+                    processProperties.forEach(updatedProcessProperties -> {
+                        if (updatedProcessProperties.getName().equals(processName) ||
+                                (updatedProcessProperties.getName().contains("_") && updatedProcessProperties.getName().substring(0,updatedProcessProperties.getName().indexOf("_")).equals(processName))) {
 //                          updatedCrossReference.forEach(processPropertyValue )
 
-                            List<ProcessPropertyValue> processPropertyValues = updatedCrossReference.getProcessPropertyValue();
+                            List<ProcessPropertyValue> processPropertyValues = updatedProcessProperties.getProcessPropertyValue();
                             if(!processPropertyValues.isEmpty()){
-                                processPropertyValues.forEach( updatedProcessProperties -> {
-                                    if(!updatedProcessProperties.getLabel().isEmpty()){
-                                        ParameterDetails parameterDetails = new ParameterDetails();
-                                        parameterDetails.setParameterName(updatedProcessProperties.getLabel());
-                                        parameterDetailsList.add(parameterDetails);
+                                processPropertyValues.forEach( updatedProcessPropertyValues -> {
+                                    if(updatedProcessPropertyValues.getLabel() != null && !updatedProcessPropertyValues.getLabel().isEmpty()){
+//                                        ParameterDetails parameterDetails = new ParameterDetails();
+//                                        parameterDetails.setParameterName(updatedProcessPropertyValues.getLabel());
+                                        parameterDetailsList.add(updatedProcessPropertyValues.getLabel());
                                     }
                                 });
                             }
