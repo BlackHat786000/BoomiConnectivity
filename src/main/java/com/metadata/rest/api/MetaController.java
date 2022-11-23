@@ -61,11 +61,15 @@ public class MetaController {
 //	@PostMapping("metadataBoomi")
 	@RequestMapping(value = "/metadataBoomi", method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseObject verifyBoomiConnectivity(@RequestBody RequestObject request){
-		return this.boomiVerificationService.verifyBoomiConnectivity(request);
+	public ResponseEntity<ResponseObject> verifyBoomiConnectivity(@RequestBody RequestObject request) {
+		ResponseObject response = this.boomiVerificationService.verifyBoomiConnectivity(request);
+		if (response != null) {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+
 	}
-
-
-
 	
 }
