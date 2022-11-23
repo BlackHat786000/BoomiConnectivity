@@ -77,6 +77,10 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
         }
 
 
+
+//        else {
+//            throw new TPApiServiceException(ErrorMessagePropertyConstants.INTEGRATION_PACK_NOT_FOUND_ERROR, HttpStatus.NOT_FOUND);
+//        }
 //        if(id==valid)
 
 
@@ -113,36 +117,36 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
 
     public ProcessDetails getProcessDetail(RequestObject request, String accountId){
 
-        String processDescription = getProcessDetailDescription(request.getIPackName(),accountId);
+//        String processDescription = getProcessDetailDescription(request.getIPackName(),accountId);
         ProcessDetails processDetail = new ProcessDetails();
         processDetail.setProcessName(request.getProcessName());
         processDetail.setProcessType(request.getProcessType());
-        processDetail.setProcessDescription(processDescription);
+        processDetail.setProcessDescription(request.getProcessDescription());
 
         return processDetail;
     }
 
-    public String getProcessDetailDescription(String integrationPackName, String accountId) {
-        QueryIPackRequest queryRequest = integrationLibraryService.createSimpleQueryExpression(
-                List.of(integrationPackName), IhubPropertyConstants.NAME, IhubPropertyConstants.BoomiOpretorEnum.EQUALS.toString());
-        logger.info("METHOD START- [queryIntegrationPackInstanceId] of IntegrationPackInstanceQueryServiceImpl ");
-        logger.debug("IntegrationPackInstanceQueryServiceImpl Account ID {},IPackName {}", accountId, integrationPackName);
-        HttpEntity<QueryIPackRequest> entity = new HttpEntity<>(queryRequest, integrationLibraryService.getHttpHeader());
-        try {
-            QueryIPackResponse response = tpRetryBoomiService.thirdPartyApiCall(
-                    integrationLibraryService.getUri(IhubPropertyConstants.BOOMI_IPACK_QUERY_URL, accountId), entity, HttpMethod.POST, QueryIPackResponse.class);
-
-            Optional<QueryIPackResult[]> result = Optional.ofNullable(response).filter(iPackResult -> response.getNumberOfResults() > 0)
-                    .map(QueryIPackResponse::getResult);
-            if (result.isPresent()) {
-                logger.debug("IntegrationPackInstanceQueryServiceImpl result integrationPackInstanceId {}", result.get()[0].getDescription());
-                return result.get()[0].getDescription();
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException httpExec) {
-//            throw new TPApiServiceException(ErrorMessagePropertyConstants.INTEGRATION_PACK_INSTANCE_QUERY, httpExec.getStatusCode());
-        }
-        return null;
-    }
+//    public String getProcessDetailDescription(String integrationPackName, String accountId) {
+//        QueryIPackRequest queryRequest = integrationLibraryService.createSimpleQueryExpression(
+//                List.of(integrationPackName), IhubPropertyConstants.NAME, IhubPropertyConstants.BoomiOpretorEnum.EQUALS.toString());
+//        logger.info("METHOD START- [queryIntegrationPackInstanceId] of IntegrationPackInstanceQueryServiceImpl ");
+//        logger.debug("IntegrationPackInstanceQueryServiceImpl Account ID {},IPackName {}", accountId, integrationPackName);
+//        HttpEntity<QueryIPackRequest> entity = new HttpEntity<>(queryRequest, integrationLibraryService.getHttpHeader());
+//        try {
+//            QueryIPackResponse response = tpRetryBoomiService.thirdPartyApiCall(
+//                    integrationLibraryService.getUri(IhubPropertyConstants.BOOMI_IPACK_QUERY_URL, accountId), entity, HttpMethod.POST, QueryIPackResponse.class);
+//
+//            Optional<QueryIPackResult[]> result = Optional.ofNullable(response).filter(iPackResult -> response.getNumberOfResults() > 0)
+//                    .map(QueryIPackResponse::getResult);
+//            if (result.isPresent()) {
+//                logger.debug("IntegrationPackInstanceQueryServiceImpl result integrationPackInstanceId {}", result.get()[0].getDescription());
+//                return result.get()[0].getDescription();
+//            }
+//        } catch (HttpClientErrorException | HttpServerErrorException httpExec) {
+////            throw new TPApiServiceException(ErrorMessagePropertyConstants.INTEGRATION_PACK_INSTANCE_QUERY, httpExec.getStatusCode());
+//        }
+//        return null;
+//    }
     public EnvironmentExtension getEnvironmentExtension(String environmentId, String primaryAcctId) {
         logger.info("METHOD START- [EnvironmentExtensionResponse]  environment Id {},primaryAcctId {}", environmentId,
                 primaryAcctId);

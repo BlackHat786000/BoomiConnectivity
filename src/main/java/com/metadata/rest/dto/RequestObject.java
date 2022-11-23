@@ -2,18 +2,20 @@ package com.metadata.rest.dto;
 
 public class RequestObject {
 
-    private String ipackName;
+    private String iPackName;
 
     private String processName;
 
     private String processType;
 
+    private String processDescription;
+
     public String getIPackName(){
-        return ipackName;
+        return iPackName;
     }
 
     public void setIPackName(String ipackName){
-        this.ipackName = ipackName;
+        this.iPackName = ipackName;
     }
 
     public String getProcessName(){
@@ -30,6 +32,14 @@ public class RequestObject {
 
     public void setProcessType(String processType){
         this.processType = processType;
+    }
+
+    public String getProcessDescription() {
+        return processDescription;
+    }
+
+    public void setProcessDescription(String processDescription) {
+        this.processDescription = processDescription;
     }
 
 }
