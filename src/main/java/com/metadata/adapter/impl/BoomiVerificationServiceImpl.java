@@ -49,14 +49,45 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
 //        this.util = util;
         this.integrationLibraryService = integrationLibraryService;
     }
+//
+//    // if process Name Valid
+//    /* Env ext fetch
+//    * loop process property name
+//    * if proces*/
 
+    public boolean verifyProcessName(String environmentId, String primaryAcctId, String processName){
+        logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
+                primaryAcctId);
+        List<String> parameterDetailsList = new ArrayList<>();
+        try {
+            EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
+            if (environmentExtension.getProcessProperties() != null ? !environmentExtension.getProcessProperties().getProcessProperty().isEmpty() : false ) {
+                List<ProcessProperty> processProperties = environmentExtension.getProcessProperties().getProcessProperty();
+                if (!(processProperties.isEmpty())) {
+                    for (ProcessProperty updatedProcessProperties : processProperties) {
+                        if (updatedProcessProperties.getName().equals(processName) ||
+                                (updatedProcessProperties.getName().contains("_") && updatedProcessProperties.getName().substring(0, updatedProcessProperties.getName().indexOf("_")).equals(processName))) {
+//                          updatedCrossReference.forEach(processPropertyValue )
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (Exception excep) {
+            logger.error("Exception occurred in fetching the CRT Details List for environmentId: '{}' "
+                    + "and primaryAccountId: '{}' and excep: '{}'", environmentId, primaryAcctId, excep.getMessage());
+            throw new TPApiServiceException(ErrorMessagePropertyConstants.CRT_DETAILS_LIST_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return false;
+    }
     public ResponseObject verifyBoomiConnectivity(RequestObject request){
 
 //        request.setIPackName(request.getIPackName());
         // queryIpackInstanceID(accID,ipackName)
         String integrationPackInstanceId = queryIntegrationPackInstanceId(request.getIPackName(), boomiInformation.getAccountId());
 
-        if(integrationPackInstanceId!=null)
+        if(integrationPackInstanceId!=null && verifyProcessName(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(), request.getProcessName()))
         {
             ResponseObject response = new ResponseObject();
             //getProcessDetail
