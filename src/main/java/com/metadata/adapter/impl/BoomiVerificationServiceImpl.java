@@ -1,17 +1,10 @@
 package com.metadata.adapter.impl;
 
-import com.metadata.adapter.api.BoomiVerificationService;
-import com.metadata.adapter.api.IntegrationLibraryService;
-import com.metadata.adapter.api.TPRetryBoomiService;
-import com.metadata.common.ErrorMessagePropertyConstants;
-import com.metadata.common.IhubPropertyConstants;
-import com.metadata.config.BoomiConfig;
-import com.metadata.exception.TPApiServiceException;
-import com.metadata.rest.dto.*;
-import com.metadata.rest.dto.envext.CrossReference;
-import com.metadata.rest.dto.envext.EnvironmentExtension;
-import com.metadata.rest.dto.envext.ProcessProperty;
-import com.metadata.rest.dto.envext.ProcessPropertyValue;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +17,23 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.metadata.adapter.api.BoomiVerificationService;
+import com.metadata.adapter.api.IntegrationLibraryService;
+import com.metadata.adapter.api.TPRetryBoomiService;
+import com.metadata.common.ErrorMessagePropertyConstants;
+import com.metadata.common.IhubPropertyConstants;
+import com.metadata.config.BoomiConfig;
+import com.metadata.exception.TPApiServiceException;
+import com.metadata.rest.dto.CrtDetails;
+import com.metadata.rest.dto.ProcessDetails;
+import com.metadata.rest.dto.QueryIPackRequest;
+import com.metadata.rest.dto.QueryIPackResponse;
+import com.metadata.rest.dto.QueryIPackResult;
+import com.metadata.rest.dto.RequestObject;
+import com.metadata.rest.dto.ResponseObject;
+import com.metadata.rest.dto.envext.EnvironmentExtension;
+import com.metadata.rest.dto.envext.ProcessProperty;
+import com.metadata.rest.dto.envext.ProcessPropertyValue;
 
 @Service
 public class BoomiVerificationServiceImpl implements BoomiVerificationService {
@@ -95,7 +102,7 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
             response.setProcessDetails(processDetail);
 
             //getCrtDetails(accId,envId,processName)
-            List<String> crtDetail = getCrtDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(), request.getProcessName());
+            List<CrtDetails> crtDetail = getCrtDetails(boomiInformation.getEnvironmentID(),boomiInformation.getAccountId(), request.getProcessName());
             response.setCrtDetails(crtDetail);
 
 
@@ -230,23 +237,31 @@ public class BoomiVerificationServiceImpl implements BoomiVerificationService {
 //        return crtDetailsList;
 //    }
 
-    public List<String>  getCrtDetails(String environmentId,String primaryAcctId,String processName){
+    public List<CrtDetails> getCrtDetails(String environmentId,String primaryAcctId,String processName) {
         logger.info("METHOD START- [ArrayList<CrtDetails>]  environment Id {},primaryAcctId {}", environmentId,
                 primaryAcctId);
-        List<String> crtDetailsList = new ArrayList<>();
+        List<CrtDetails> crtDetailsList = new ArrayList<>();
         try {
             EnvironmentExtension environmentExtension = getEnvironmentExtension(environmentId, primaryAcctId);
-            if (environmentExtension.getCrossReferences() != null ? !environmentExtension.getCrossReferences().getCrossReference().isEmpty() : false ) {
-                List<CrossReference> crossReferences = environmentExtension.getCrossReferences().getCrossReference();
-                if (!(crossReferences.isEmpty())) {
-                    crossReferences.forEach(updatedCrossReference -> {
-                        if (updatedCrossReference.getName().substring(0,updatedCrossReference.getName().indexOf("_")).equals(processName)) {
-//                            CrtDetails crtDetails = new CrtDetails();
-//                                crtDetails.setCrtId(updatedCrossReference.getId());
-//                            crtDetails.setCrtName();
-                            crtDetailsList.add(updatedCrossReference.getName());
-                        }
-                    });
+            if (environmentExtension.getProcessProperties() != null ? !environmentExtension.getProcessProperties().getProcessProperty().isEmpty() : false ) {
+                List<ProcessProperty> processProperties = environmentExtension.getProcessProperties().getProcessProperty();
+                if (!(processProperties.isEmpty())) {
+                    Optional<ProcessProperty> processProperty = processProperties.stream()
+                    		.filter(procProp -> procProp
+                    				.getName()
+                    				.equals(processName + "_CRTConfig"))
+                    		.findFirst();
+                    if (processProperty.isPresent()) {
+                    	List<ProcessPropertyValue> procPropVal = processProperty.get().getProcessPropertyValue();
+                    	Iterator<ProcessPropertyValue> procPropValItr = procPropVal.iterator();
+                    	while(procPropValItr.hasNext()) {
+                    		ProcessPropertyValue processPropertyValue = procPropValItr.next();
+                    		CrtDetails crtDetails = new CrtDetails();
+                    		crtDetails.setCrtName(processPropertyValue.getLabel());
+                    		crtDetails.setCrtHeaders(processPropertyValue.getValue());
+                    		crtDetailsList.add(crtDetails);
+                    	}
+                    }
                 }
             }
         } catch (Exception excep) {

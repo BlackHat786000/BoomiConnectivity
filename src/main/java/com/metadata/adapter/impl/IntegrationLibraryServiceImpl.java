@@ -56,7 +56,7 @@ public class IntegrationLibraryServiceImpl implements IntegrationLibraryService 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.AUTHORIZATION, "Basic YWpheS5zaW5naEB1a2cuY29tOkluZGlhIyFAMzI=");
+        headers.add(HttpHeaders.AUTHORIZATION, "Basic YWpheS5zaW5naEB1a2cuQ09NOkluZGlhIzEyMzQzMjE=");
         return headers;
     }
 
